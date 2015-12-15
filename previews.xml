@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<previews>
+
+    <preview
+        name="Config1"
+        activity="com.example.aidltest.MainActivity"
+        config="layout-ldltr-sw480dp-w854dp-h480dp-large-long-land-notnight-mdpi-finger-keyssoft-nokeys-navhidden-nonav-854x480-v19"
+        device="5.4&quot; FWVGA"
+        devicestate="Landscape"
+        target="Android 4.4.2"
+        theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" >
+    </preview>
+
+</previews>

@@ -1,0 +1,285 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1" >
+        <ImageButton 
+            android:id="@+id/bt_volume_down"
+	        android:layout_width="60dip"
+	        android:layout_height="match_parent"
+	        android:background="@drawable/btn_quick_icon_bg"
+	        android:src="@drawable/ic_volume_reduce"
+	        android:onClick="onVolumeDown"
+            />
+        <View 
+	        android:layout_width="1dip"
+	        android:layout_height="match_parent"
+	        android:background="@drawable/vertical_line"
+	        android:layout_toRightOf="@+id/bt_volume_down"
+            />
+        <ImageButton 
+            android:id="@+id/bt_settings"
+	        android:layout_width="60dip"
+	        android:layout_height="match_parent"
+	        android:background="@drawable/btn_quick_icon_bg"
+	        android:src="@drawable/ic_settings"
+	        android:onClick="onStartSettings"
+	        android:layout_toRightOf="@+id/bt_volume_down"
+            />
+        <View 
+            android:id="@+id/volume_vertical_line"
+	        android:layout_width="1dip"
+	        android:layout_height="match_parent"
+	        android:background="@drawable/vertical_line"
+	        android:layout_toRightOf="@+id/bt_settings"
+            />
+        <ImageButton 
+            android:id="@+id/bt_volume_up"
+	        android:layout_width="60dip"
+	        android:layout_height="match_parent"
+	        android:background="@drawable/btn_quick_icon_bg"
+	        android:src="@drawable/ic_volume_add"
+	        android:onClick="onVolumeUp"
+	        android:layout_toRightOf="@+id/volume_vertical_line"
+            />
+        <View 
+            android:id="@+id/volume_vertical_line2"
+	        android:layout_width="1dip"
+	        android:layout_height="match_parent"
+	        android:background="@drawable/vertical_line"
+	        android:layout_toRightOf="@+id/bt_volume_up"
+            />
+        <LinearLayout 
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:layout_toRightOf="@+id/volume_vertical_line2"
+            >
+	        <ImageView 
+	            android:id="@+id/bt_status_pic"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_gravity="center_vertical"
+		        android:layout_marginLeft="15dip"
+		        android:src="@drawable/bt_status_closed"
+	            />
+	        <TextView 
+	            android:id="@+id/bt_status_open"
+		        android:layout_width="wrap_content"
+		        android:layout_height="match_parent"
+		        android:singleLine="true"
+		        android:gravity="center_vertical"
+		        android:text="已关闭"
+		        android:textSize="20dip"
+	            />
+        </LinearLayout>
+    </RelativeLayout>
+    <View 
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:background="#dddddd"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:background="#eeeeee"
+         >
+<!--  android:background="@drawable/edit_text_bg" -->
+        <TextView
+            android:id="@+id/tv"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textSize="40dp" />
+
+        <ImageButton
+            android:id="@+id/keypad_del"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#00000000"
+            android:src="@drawable/me_number_delete" 
+            android:text="3" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        >
+
+        <ImageButton
+            android:id="@+id/keypad_one"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/ic_digits"
+            android:gravity="center"
+            android:src="@drawable/ic_digit_one" 
+            android:text="1" />
+
+        <ImageButton
+            android:id="@+id/keypad_two"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/ic_digits"
+            android:gravity="center"
+            android:src="@drawable/dial_num_2_normal" 
+            android:text="2" />
+
+        <ImageButton
+            android:id="@+id/keypad_three"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/ic_digits"
+            android:gravity="center"
+            android:src="@drawable/dial_num_3_normal" 
+            android:text="3" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        >
+
+        <ImageButton
+            android:id="@+id/keypad_four"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/ic_digits"
+            android:gravity="center"
+            android:src="@drawable/ic_digit_four" 
+            android:text="4" />
+
+        <ImageButton
+            android:id="@+id/keypad_five"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/ic_digits"
+            android:gravity="center"
+            android:src="@drawable/dial_num_5_normal" 
+            android:text="5" />
+
+        <ImageButton
+            android:id="@+id/keypad_six"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/ic_digits"
+            android:gravity="center"
+            android:src="@drawable/dial_num_6_normal" 
+            android:text="6" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        >
+
+        <ImageButton
+            android:id="@+id/keypad_seven"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/ic_digits"
+            android:gravity="center"
+            android:src="@drawable/ic_digit_seven" 
+            android:text="7" />
+
+        <ImageButton
+            android:id="@+id/keypad_eight"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/ic_digits"
+            android:gravity="center"
+            android:src="@drawable/dial_num_8_normal" 
+            android:text="8" />
+
+        <ImageButton
+            android:id="@+id/keypad_nine"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/ic_digits"
+            android:gravity="center"
+            android:src="@drawable/dial_num_9_normal" 
+            android:text="9" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        >
+
+        <ImageButton
+            android:id="@+id/keypad_star"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/ic_digits"
+            android:gravity="center"
+            android:src="@drawable/dial_star_normal" 
+            android:text="*" />
+
+        <ImageButton
+            android:id="@+id/keypad_zero"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/ic_digits"
+            android:gravity="center"
+            android:src="@drawable/dial_num_0_normal" 
+            android:text="0" />
+
+        <ImageButton
+            android:id="@+id/keypad_pound"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/ic_digits"
+            android:gravity="center"
+            android:src="@drawable/dial_husa_normal" 
+            android:text="#" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        >
+
+        <ImageButton
+            android:id="@+id/keypad_call"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:background="@drawable/me_call_selector"
+            />
+	    <ImageButton
+	        android:id="@+id/keypad_contact"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:background="@drawable/ic_digits"
+            android:src="@drawable/ic_contacts"
+	        android:textColor="#ffffff"
+	        />
+    </LinearLayout>
+
+</LinearLayout>

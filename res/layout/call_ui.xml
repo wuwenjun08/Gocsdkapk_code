@@ -1,0 +1,156 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:background="#cc000000">
+    
+    <!-- 手机来电界面 -->
+    <LinearLayout 
+        android:id="@+id/call_incoming_layout"
+	    android:layout_width="400dip"
+	    android:layout_height="400dip" 
+	    android:background="@drawable/call_incoming_bg"
+	    android:orientation="vertical"
+	    android:layout_centerInParent="true"
+	    android:visibility="gone"
+        >
+        
+        <ImageView 
+            android:layout_width="100dip"
+            android:layout_height="100dip"
+            android:layout_marginTop="60dip"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/contact_photo_small"
+            />
+        
+	    <TextView
+	        android:id="@+id/call_incoming_number"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="25dip"
+	        android:singleLine="true"
+	        android:gravity="center"
+	        android:text="未知号码"
+	        android:textColor="#000000"
+	        android:textSize="45dp" />
+        
+	    <TextView
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:gravity="center"
+	        android:text="来电"
+	        android:textColor="#666666"
+	        android:textSize="30dp" />
+
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:orientation="horizontal"
+	        android:layout_gravity="bottom"
+	        android:layout_marginTop="10dip"
+	        android:gravity="center">	        
+	        <ImageButton
+	            android:id="@+id/call_incoming_accept"
+	            android:layout_width="0dip"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:background="#00000000"
+	            android:src="@drawable/btn_call_accept"
+	            />
+	        <ImageButton
+	            android:id="@+id/call_incoming_hangup"
+	            android:layout_width="0dip"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:background="#00000000"
+            	android:src="@drawable/btn_call_hangup"
+            	/>
+	        
+	    </LinearLayout>
+        
+    </LinearLayout>
+
+    <!-- 手机通话界面 -->
+    <RelativeLayout 
+        android:id="@+id/calling_layout"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent" 
+	    android:background="#000000"
+	    android:orientation="vertical"
+        >
+	    <LinearLayout
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent" 
+	    	android:background="@drawable/contact_photo_big"
+	    	android:orientation="vertical" />
+        <LinearLayout 
+	        android:layout_width="350dip"
+	        android:layout_height="match_parent"
+	        android:layout_alignParentRight="true"
+	        android:orientation="vertical"
+	        android:gravity="center_horizontal"
+            >
+	        <TextView
+		        android:id="@+id/calling_name"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginTop="65dip"
+		        android:text="未知号码"
+		        android:textColor="#ffffff"
+		        android:singleLine="true"
+		        android:textSize="65dp" />
+	        <TextView
+		        android:id="@+id/calling_number"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginTop="15dip"
+		        android:text="112"
+		        android:textColor="#ffffff"
+		        android:textSize="35dp" />
+			<LinearLayout 
+			    android:id="@+id/voice_transfer"
+		        android:layout_width="218dip"
+		        android:layout_height="wrap_content"
+		        android:orientation="horizontal"
+		        android:layout_marginTop="15dip"
+		        android:background="@drawable/transfer_bg"
+			    >
+			    <ImageButton
+			        android:id="@+id/voice_transfer_to_bt"
+			        android:layout_width="0dip"
+			        android:layout_height="wrap_content"
+			        android:layout_weight="1"
+			        android:background="#000000"
+			        android:src="@drawable/btn_transfer_bt"
+			        />
+			    <ImageButton
+			        android:id="@+id/voice_transfer_to_phone"
+			        android:layout_width="0dip"
+			        android:layout_height="wrap_content"
+			        android:layout_weight="1"
+			        android:background="#000000"
+			        android:src="@drawable/btn_transfer_phone"
+			        />
+			</LinearLayout>
+	
+		    <TextView
+		        android:id="@+id/calling_time"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginTop="15dip"
+		        android:layout_marginBottom="15dip"
+		        android:text=" "
+		        android:textSize="25dp" 
+		        android:textColor="#ffffff"/>
+		    
+	        <Button
+	            android:id="@+id/calling_hangup"
+	            android:layout_width="150dip"
+	            android:layout_height="70dip"
+	            android:background="@drawable/btn_call_hangup"/>
+	
+        </LinearLayout>
+	        
+    </RelativeLayout>
+
+</RelativeLayout>

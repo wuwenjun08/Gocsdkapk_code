@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dip"
+        android:orientation="vertical" 
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/contact_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:layout_marginLeft="30dip"
+            android:textSize="30dip"
+            android:text="姓名：" />
+
+	    <TextView
+	        android:id="@+id/contact_body"
+	        android:layout_width="wrap_content"
+	        android:layout_height="20dp"
+            android:singleLine="true"
+            android:layout_marginLeft="30dip"
+	        android:gravity="center_vertical"
+	        android:textColor="#000000"
+	        android:textSize="18dp" />
+
+        <TextView
+            android:id="@+id/contact_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:layout_marginLeft="30dip"
+            android:textSize="18dip"
+            android:text="电话：" />
+    </LinearLayout>
+
+</LinearLayout>
