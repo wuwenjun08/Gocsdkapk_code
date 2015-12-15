@@ -50,6 +50,7 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -671,4 +672,19 @@ public class MainActivity extends Activity implements OnClickListener{
     public void onVolumeDown(View v){
 		startGocsdkService(OperateCommand.SET_VOICE_DOWN);
     }
+
+    
+    public boolean dispatchKeyEvent(KeyEvent event){
+    	switch(event.getKeyCode()){
+    	case KeyEvent.KEYCODE_VOLUME_UP:
+    		if(event.getAction() == KeyEvent.ACTION_DOWN)
+    			startGocsdkService(OperateCommand.SET_VOICE_UP);
+    		return true;
+    	case KeyEvent.KEYCODE_VOLUME_DOWN:
+    		if(event.getAction() == KeyEvent.ACTION_DOWN)
+    			startGocsdkService(OperateCommand.SET_VOICE_DOWN);
+    		return true;
+    	}
+		return super.dispatchKeyEvent(event);
+	}
 }

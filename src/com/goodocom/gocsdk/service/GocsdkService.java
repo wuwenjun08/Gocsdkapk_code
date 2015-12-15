@@ -154,7 +154,8 @@ public class GocsdkService extends Service {
     			syncContact = true;
         		try {
         			if(Config.btMusic){
-        				gocSI.GOCSDK_musicStop();	//停止播放音乐
+        				if(Config.btMusicSync)
+        					gocSI.GOCSDK_musicStop();	//停止播放音乐
         				Config.tqBtMusic = true;
         			}
 					gocSI.GOCSDK_phoneBookStartUpdate();
@@ -522,10 +523,13 @@ public class GocsdkService extends Service {
 						// TODO Auto-generated method stub
 						String status = Settings.System.getString(getContentResolver(), "bt_enable");
 						try {
-							if(status.equals("1"))
+							if(status.equals("1")){
 								gocSI.GOCSDK_SetBTFound();	//设置为发现模式
-							else
+								BTFileOperater.openSpeaker();
+							}else{
 								gocSI.GOCSDK_SetBTUnfound();	//设置为不被发现模式
+								BTFileOperater.closeSpeaker();
+							}
 
 							gocSI.GOCSDK_GetVolume();	//获取音量
 							gocSI.GOCSDK_InquiryCurBtName();	//获取连接蓝牙名称
@@ -537,28 +541,22 @@ public class GocsdkService extends Service {
 					}
 					
 				}, 5000);
-				//检测蓝牙是否连接
-				if(Settings.System.getString(getContentResolver(), "bt_connect").equals("1")){
-					BTFileOperater.openSpeaker();
-				}else{
-					BTFileOperater.closeSpeaker();
-				}
-//				new Handler().postDelayed(new Runnable(){
-//
-//					@Override
-//					public void run() {
-//						// TODO Auto-generated method stub
-//						try {
-//							//Toast.makeText(GocsdkService.this, "正在连接蓝牙", Toast.LENGTH_LONG).show();
-//							gocSI.GOCSDK_connectLast();
-//						} catch (RemoteException e) {
-//							// TODO Auto-generated catch block
-//							//Toast.makeText(GocsdkService.this, "蓝牙连接手机失败", Toast.LENGTH_SHORT).show();
-//							e.printStackTrace();
-//						}
-//					}
-//					
-//				}, 10000);
+				/*new Handler().postDelayed(new Runnable(){
+
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						try {
+							//Toast.makeText(GocsdkService.this, "正在连接蓝牙", Toast.LENGTH_LONG).show();
+							gocSI.GOCSDK_connectLast();
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							//Toast.makeText(GocsdkService.this, "蓝牙连接手机失败", Toast.LENGTH_SHORT).show();
+							e.printStackTrace();
+						}
+					}
+					
+				}, 10000);*/
 			}else{
 				gocSI.GOCSDK_CloseBt();
 			}
@@ -1299,7 +1297,8 @@ public class GocsdkService extends Service {
 	private void reStartBtMusic(){
 		if(Config.tqBtMusic){
 			try {
-				gocSI.GOCSDK_musicPlayOrPause();
+				if(Config.btMusicSync)
+					gocSI.GOCSDK_musicPlayOrPause();
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -50,6 +50,7 @@ public class Config {
 	public static String MISSED_TYPE = "未接通";
 	
 	//蓝牙播放音乐
+	public static boolean btMusicSync = true;
 	public static boolean btMusic = false;
 	public static boolean tqBtMusic = false;
 
