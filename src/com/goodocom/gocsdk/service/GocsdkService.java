@@ -811,11 +811,17 @@ public class GocsdkService extends Service {
 			boolean isConnected = Settings.System.getString(getContentResolver(), "bt_connect").equals("1");
 			if(isConnected){
 				if(status == 1){
-					startSpeak("蓝牙媒体音频连接错误，重新连接");
-					BTStatus.btErrorReconnected = true;
-					gocSI.GOCSDK_disconnect();
+					if(BTStatus.btErrorReconnectedCount < 5){
+						startSpeak("蓝牙媒体音频连接错误，重新连接");
+						BTStatus.btErrorReconnected = true;
+						gocSI.GOCSDK_disconnect();
+						BTStatus.btErrorReconnectedCount ++;
+					}else{
+						BTStatus.btErrorReconnectedCount = 0;
+					}
 				}else{
 					BTStatus.btErrorReconnected = false;
+					BTStatus.btErrorReconnectedCount = 0;
 				}
 			}
 		}
