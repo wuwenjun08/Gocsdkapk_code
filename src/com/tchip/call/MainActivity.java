@@ -1,6 +1,7 @@
 package com.tchip.call;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,6 +40,7 @@ import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.media.AudioManager;
+import android.media.MediaRecorder;
 import android.media.ToneGenerator;
 import android.net.Uri;
 import android.os.Bundle;
@@ -624,9 +626,6 @@ public class MainActivity extends Activity implements OnClickListener{
         		showContactList(true);
         		showCallLogList();
         		showContactCallLog();
-        	}else if(GocMessage.CONTACT_RECEIVER.equals(action)){
-        		//读取到一个联系人，显示
-        		//showContactList();
         	}
         }
     }

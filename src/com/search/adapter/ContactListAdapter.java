@@ -1,13 +1,16 @@
 package com.search.adapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.goodocom.gocsdk.R;
 import com.tchip.call.MainActivity;
@@ -26,9 +29,9 @@ public class ContactListAdapter extends ArrayAdapter<Contact> implements Section
 	int textViewResourceId;
 	Context context;
 
-	public ContactListAdapter(Context context, int textViewResourceId, List<Contact> list) {
+	public ContactListAdapter(Context context, int textViewResourceId, ArrayList<Contact> list) {
 		super(context, textViewResourceId, list);
-		this.list = list;
+		this.list = (list == null) ? null : (ArrayList<Contact>)list.clone();
 		this.textViewResourceId = textViewResourceId;
 		this.context = context;
 	}
@@ -59,16 +62,29 @@ public class ContactListAdapter extends ArrayAdapter<Contact> implements Section
     	notifyDataSetChanged();
     }*/
 
+
+	class HolderView{
+		public TextView name;
+		public TextView number;
+	}
+	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
-		// View.inflate对布局XML文件进行填充，获得View对象（相当于这个R.layout.activity_main）
-		// 参数1：容器的Context 参数2：表示填充的哪个布局文件XML
-		// 参数3：表示具体填充到哪个容器中，这里由Adapter指定，所以填null
-		View v = View.inflate(context, R.layout.contact_list, null);
+		HolderView holder = null;
+		if (convertView == null) {
+			convertView = View.inflate(context, R.layout.contact_list, null);
+			holder = new HolderView();
+			holder.name = (TextView) convertView.findViewById(R.id.name);
+			holder.number = (TextView) convertView.findViewById(R.id.phone);
+			convertView.setTag(holder);
+		} else {
+			holder = (HolderView) convertView.getTag();
+		}
+		
 		// tv.findViewById(R.id.id))获得填充后的布局文件中的具体哪个ID的对象，并赋值
 		if(list != null && list.size() > position){
-			((TextView) v.findViewById(R.id.name)).setText(list.get(position).getName());
+			holder.name.setText(list.get(position).getName());
 	
 			String str = list.get(position).getPhone();
 			// str =
@@ -79,9 +95,9 @@ public class ContactListAdapter extends ArrayAdapter<Contact> implements Section
 			//		+ "</p><p><font color=\"#00bbaa \">颜色2</p><h1>标题1</h1><h3>标题2< /h3><h6>标题3</h6><p>大于>小于<</p><p>"
 			//		+ "下面是网络图片</p><img src=\"http://avatar.csdn.net/0/3/8/2_zhang957411207.jpg\"/></body></html>";
 			// ((TextView)v.findViewById(R.id.phone)).setText(Html.fromHtml(str));
-			((TextView) v.findViewById(R.id.phone)).setText(str);
+			holder.number.setText(str);
 		}
-		return v;
+		return convertView;
 	}
 
 	@Override

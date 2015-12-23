@@ -184,4 +184,5 @@ interface IGocsdkService {
 	/*查询音乐播放状态*/
 	void GOCSDK_GetMusicStatus();
 	
+	void GOCSDK_SetBTStatus();
 }	

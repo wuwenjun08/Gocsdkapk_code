@@ -63,6 +63,7 @@ public class BTSettings extends Activity {
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(GocMessage.BT_OPENED);
 		filter.addAction(GocMessage.BT_CLOSED);
+		filter.addAction(GocMessage.BT_NAME_GET);
 		filter.addAction(GocMessage.BT_CONNECTED);
 		filter.addAction(GocMessage.BT_DISCONNECTED);
 		filter.addAction(GocMessage.CONTACT_SYNC_DONE);
@@ -79,19 +80,33 @@ public class BTSettings extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
         	String action = intent.getAction();
-        	btPair.setEnabled(true);
-        	btPair.setBackgroundResource(R.drawable.settings_list_bg);
-        	btConnectStatus.setText(Config.BT_PARI_NAME);
         	
         	if(GocMessage.BT_CONNECTED.equals(action)){
         		//蓝牙连接
+            	btPair.setEnabled(true);
+            	btPair.setBackgroundResource(R.drawable.settings_list_bg);
+            	btConnectStatus.setText(Config.BT_PARI_NAME);
         		btConnectOperate.setText("断开连接");
+        		try{
+        			handler.removeCallbacks(r);
+        		}catch(Exception e){
+        			
+        		}
         	}else if(GocMessage.BT_DISCONNECTED.equals(action)){
         		//蓝牙断开连接
+            	btPair.setEnabled(true);
+            	btPair.setBackgroundResource(R.drawable.settings_list_bg);
+            	btConnectStatus.setText(Config.BT_PARI_NAME);
         		btConnectOperate.setText("开始配对");
+        		try{
+        			handler.removeCallbacks(r);
+        		}catch(Exception e){
+        			
+        		}
         	}else if(GocMessage.CONTACT_SYNC_DONE.equals(action)){
         		if(pdSC != null)
         			pdSC.dismiss();
+        		switchButton.setEnabled(true);
         	}else if(GocMessage.CONTACT_DELETE_DONE.equals(action)){
         		if(pdCC != null)
         			pdCC.dismiss();
@@ -107,6 +122,9 @@ public class BTSettings extends Activity {
         	}else if(GocMessage.BT_CLOSED.equals(action)){
         		//关闭蓝牙
         		switchButton.setChecked(false);
+        	}else if(GocMessage.BT_NAME_GET.equals(action)){
+        		//蓝牙名称获取成功
+        		btName.setText(Config.BT_NAME);
         	}
         }
     }
@@ -237,6 +255,11 @@ public class BTSettings extends Activity {
     public void onPause(){
     	super.onPause();
     	unregisterReceiver(gocReceiver);
+		try{
+			handler.removeCallbacks(r);
+		}catch(Exception e){
+			
+		}
     	this.finish();
     }
     
@@ -310,7 +333,20 @@ public class BTSettings extends Activity {
     	btPair.setEnabled(false);
     	btPair.setBackgroundColor(Color.GRAY);
     	sendBroadcast(new Intent(isBTConnected() ? GocMessage.DISCONNECT_PHONE : GocMessage.CONNECT_PHONE));
+    	handler.postDelayed(r, 60000);
     }
+    
+    Handler handler = new Handler();
+    Runnable r= new Runnable(){
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+        	btPair.setEnabled(true);
+        	btPair.setBackgroundResource(R.drawable.settings_list_bg);
+		}
+    	
+    };
     
     private final static int CLEAR_CALL_HISTORY = 0;
     private final static int CLEAR_CONTACT = 1;
@@ -352,6 +388,7 @@ public class BTSettings extends Activity {
     			case SYNC_CONTACT:
     				pdSC  =  ProgressDialog.show(BTSettings.this, "", "联系人同步中，请稍等。。。", false, true);
     				sendBroadcast(new Intent(GocMessage.SYNC_CONTACT));
+    				switchButton.setEnabled(false);
     				break;
     			}
     			dialog.dismiss();
@@ -366,19 +403,7 @@ public class BTSettings extends Activity {
     	builder.create().show();
     }
     ProgressDialog pdSC, pdCC;
-
-    private void showDialog2(String message){
-    	AlertDialog.Builder builder = new Builder(BTSettings.this);
-    	builder.setMessage("\n" + message + "\n\n");
-    	builder.setTitle("提示");
-    	builder.setPositiveButton("确认", new OnClickListener() {
-    		@Override
-    		public void onClick(DialogInterface dialog, int which) {
-    			dialog.dismiss();
-    		}
-    	});
-    	builder.create().show();
-    }
+    
 	
 	/**
 	 * 启动GocsdkService

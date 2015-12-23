@@ -12,6 +12,8 @@ public class GocMessage{
 	public static String BT_OPENED= "com.tchip.BT_OPENED";
 	//关闭蓝牙
 	public static String BT_CLOSED= "com.tchip.BT_CLOSED";
+	//蓝牙名称获取成功
+	public static String BT_NAME_GET= "com.tchip.BT_NAME_GET";
 	//蓝牙连接成功
 	public static String BT_CONNECTED= "com.tchip.BT_CONNECTED";
 	//蓝牙连接失败

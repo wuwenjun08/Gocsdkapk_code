@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -16,12 +17,15 @@ import java.util.List;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
@@ -38,6 +42,10 @@ import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.provider.ContactsContract;
 import android.provider.Settings;
+import android.provider.ContactsContract.Data;
+import android.provider.ContactsContract.RawContacts;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.provider.ContactsContract.CommonDataKinds.StructuredName;
 import android.util.Log;
 import android.widget.Toast;
 import com.goodocom.gocsdk.Commands;
@@ -53,7 +61,6 @@ import com.tchip.contact.ContactOperate;
 import com.tchip.database.ContactDB;
 import com.tchip.util.BTFileOperater;
 import com.tchip.util.BTStatus;
-import com.tchip.util.CrashHandler;
 import com.tchip.util.GocMessage;
 import com.tchip.util.OperateCommand;
 import com.tchip.util.PinyinComparator;
@@ -113,11 +120,25 @@ public class GocsdkService extends Service {
         	String action = intent.getAction();
 
         	if("com.tchip.ACC_ON".equals(action)){
-        		//startSpeak("ACC上电");
         		initBTStatus();
+        		new Handler().postDelayed(new Runnable(){
+
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						try {
+							//Toast.makeText(GocsdkService.this, "正在连接蓝牙", Toast.LENGTH_LONG).show();
+							gocSI.GOCSDK_connectLast();
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							//Toast.makeText(GocsdkService.this, "蓝牙连接手机失败", Toast.LENGTH_SHORT).show();
+							e.printStackTrace();
+						}
+					}
+					
+				}, 10000);
         	}else if("com.tchip.ACC_OFF".equals(action)){
         		//休眠
-        		//startSpeak("休眠");
         		try {
 					gocSI.GOCSDK_disconnect();
 					gocSI.GOCSDK_SetBTUnfound();
@@ -127,7 +148,6 @@ public class GocsdkService extends Service {
 					e.printStackTrace();
 					Toast.makeText(GocsdkService.this, "蓝牙断开手机失败", Toast.LENGTH_SHORT).show();
 				}
-        		//GocsdkService.this.sendBroadcast(new Intent("com.tchip.SLEEP_ON"));
         		BTFileOperater.writeBTFile("0");
         		GocsdkService.this.stopSelf();
         	}else if("com.tchip.BT_VOLUME_MUTE".equals(action)){
@@ -142,7 +162,7 @@ public class GocsdkService extends Service {
 			}else if("com.tchip.BT_VOLUME_UNMUTE".equals(action)){
 				//蓝牙音乐强制停止
 				try {
-					if(!Config.callUIShow)
+					//if(!Config.callUIShow)
 						gocSI.GOCSDK_GetVolumeUnmute();
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
@@ -150,6 +170,7 @@ public class GocsdkService extends Service {
 				}
         	}else if(GocMessage.SYNC_CONTACT.equals(action)){
         		//同步联系人
+        		Log.d("wwj_sync_time", "" + System.currentTimeMillis());
     			ContactCallLogStatus.ContactStatus = ContactCallLogStatus.contactSyncing;
     			syncContact = true;
         		try {
@@ -166,6 +187,7 @@ public class GocsdkService extends Service {
         			ContactCallLogStatus.ContactStatus = ContactCallLogStatus.contactSyncFailed;
         			syncContact = false;
 					Toast.makeText(GocsdkService.this, "联系人同步失败", Toast.LENGTH_SHORT).show();
+		    		sendBroadcast(new Intent(GocMessage.CONTACT_SYNC_DONE));
 					reStartBtMusic();
 				}
         	}else if(GocMessage.DELETE_CONTACT.equals(action)){
@@ -273,7 +295,6 @@ public class GocsdkService extends Service {
 		Config.BT_PIN_CODE = preferences.getString("pin", "0000");
 
 		if(BTFileOperater.getAccStatus()){	
-			//am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 			gocSI = new GocsdkServiceImp(this);
 			callbacks = new RemoteCallbackList<IGocsdkCallback>();
 			parser = new CommandParser(callbacks);
@@ -281,11 +302,8 @@ public class GocsdkService extends Service {
 			tchipToast = new TchipToast(this);
 			registerCallback();
 			initGocReceiver();
-
-    		//startSpeak("蓝牙启动");
 			initBTStatus();		
 		}else{
-    		//startSpeak("蓝牙启动2");
     		GocsdkService.this.stopSelf();
 		}
 		
@@ -540,15 +558,17 @@ public class GocsdkService extends Service {
 						}						
 					}
 					
-				}, 5000);
-				/*new Handler().postDelayed(new Runnable(){
+				}, 10000);
+				new Handler().postDelayed(new Runnable(){
 
 					@Override
 					public void run() {
 						// TODO Auto-generated method stub
+						String status = Settings.System.getString(getContentResolver(), "bt_enable");
 						try {
+							if(status.equals("1"))
+								gocSI.GOCSDK_connectLast();
 							//Toast.makeText(GocsdkService.this, "正在连接蓝牙", Toast.LENGTH_LONG).show();
-							gocSI.GOCSDK_connectLast();
 						} catch (RemoteException e) {
 							// TODO Auto-generated catch block
 							//Toast.makeText(GocsdkService.this, "蓝牙连接手机失败", Toast.LENGTH_SHORT).show();
@@ -556,9 +576,10 @@ public class GocsdkService extends Service {
 						}
 					}
 					
-				}, 10000);*/
+				}, 15000);
 			}else{
 				gocSI.GOCSDK_CloseBt();
+				gocSI.GOCSDK_SetBTStatus();
 			}
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
@@ -585,13 +606,21 @@ public class GocsdkService extends Service {
 			Settings.System.putString(getContentResolver(), "bt_connect", "0");
 			GocsdkService.this.sendBroadcast(new Intent(GocMessage.BT_DISCONNECTED));
 			
-			gocSI.GOCSDK_MicSwitch((char)0);
+			//gocSI.GOCSDK_MicSwitch((char)0);
 			//关闭喇叭
 			BTFileOperater.closeSpeaker();
 			
 			if(BTStatus.btErrorReconnected){
 				gocSI.GOCSDK_connectLast();
 				BTStatus.btErrorReconnected = false;
+			}
+			
+			if(syncContact){
+    			ContactCallLogStatus.ContactStatus = ContactCallLogStatus.contactSyncFailed;
+    			syncContact = false;
+				Toast.makeText(GocsdkService.this, "联系人同步失败", Toast.LENGTH_SHORT).show();
+	    		sendBroadcast(new Intent(GocMessage.CONTACT_SYNC_DONE));
+				reStartBtMusic();
 			}
 		}
 
@@ -624,7 +653,6 @@ public class GocsdkService extends Service {
 			Config.cl.setName(getContactName(number));
 					
 			GocsdkService.this.sendBroadcast(new Intent(GocMessage.CALL_SUCCESS));
-
 		}
 
 		@Override
@@ -655,11 +683,7 @@ public class GocsdkService extends Service {
 	    	Config.callUIShow = false;
 			if(showToast)
 				Toast.makeText(GocsdkService.this, "onHangUp", Toast.LENGTH_SHORT).show();
-			try {
-				gocSI.GOCSDK_MicSwitch((char)0);
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
+			//gocSI.GOCSDK_MicSwitch((char)0);
 			GocsdkService.this.sendBroadcast(new Intent(GocMessage.CALL_HANG_UP));
 		}
 
@@ -668,11 +692,7 @@ public class GocsdkService extends Service {
 			// TODO Auto-generated method stub
 			if(showToast)
 				Toast.makeText(GocsdkService.this, "onTalking", Toast.LENGTH_SHORT).show();
-			try {
-				gocSI.GOCSDK_MicSwitch((char)0x01);
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
+			//gocSI.GOCSDK_MicSwitch((char)0x01);
 			GocsdkService.this.sendBroadcast(new Intent(GocMessage.CALL_ONTALKING));
 		}
 
@@ -730,7 +750,14 @@ public class GocsdkService extends Service {
 		@Override
 		public void onInitSucceed() throws RemoteException {
 			// TODO Auto-generated method stub
+			String btStatus = Settings.System.getString(getContentResolver(), "bt_enable");
+			Log.d("goc", "btStatus : " + btStatus);
+			if(!BTFileOperater.getAccStatus())
+				btStatus = "0";
 
+			if(btStatus.equals("0")){
+				gocSI.GOCSDK_SetBTStatus();
+			}
 		}
 
 		@Override
@@ -805,17 +832,33 @@ public class GocsdkService extends Service {
 		@Override
 		public void onAvStatus(int status) throws RemoteException {
 			// TODO Auto-generated method stub
+			//蓝牙媒体音频状态
+			Log.d("wwj_bt", "-------------------------------------------------");
 			Log.d("wwj_bt", "btconnected : " + Settings.System.getString(getContentResolver(), "bt_connect"));
 			Log.d("wwj_bt", "onAvStatus : " + status);
-			
 			boolean isConnected = Settings.System.getString(getContentResolver(), "bt_connect").equals("1");
 			if(isConnected){
 				if(status == 1){
 					if(BTStatus.btErrorReconnectedCount < 5){
-						startSpeak("蓝牙媒体音频连接错误，重新连接");
-						BTStatus.btErrorReconnected = true;
-						gocSI.GOCSDK_disconnect();
-						BTStatus.btErrorReconnectedCount ++;
+						new Handler().postDelayed(new Runnable(){
+
+							@Override
+							public void run() {
+								// TODO Auto-generated method stub
+								if(Settings.System.getString(getContentResolver(), "bt_connect").equals("1") && BTFileOperater.getAccStatus()){
+									//startSpeak("蓝牙媒体音频连接错误，重新连接");
+									BTStatus.btErrorReconnected = true;
+									try {
+										gocSI.GOCSDK_disconnect();
+									} catch (RemoteException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+									BTStatus.btErrorReconnectedCount ++;
+								}
+							}
+							
+						}, 1000);
 					}else{
 						BTStatus.btErrorReconnectedCount = 0;
 					}
@@ -837,6 +880,7 @@ public class GocsdkService extends Service {
 			// TODO Auto-generated method stub
 			Log.d("wwj_test", "name : " + name);
 			Config.BT_NAME = name;
+			GocsdkService.this.sendBroadcast(new Intent(GocMessage.BT_NAME_GET));
 		}
 
 		@Override
@@ -878,11 +922,13 @@ public class GocsdkService extends Service {
 				con.setName(name);
 				con.setPhone(number);
 				ContactOperate.contactList.add(con);
-				addContact(GocsdkService.this, name, number);
+				//addContact(GocsdkService.this, name, number);
 				
 				//读取到一个新的联系人，发送广播
-				GocsdkService.this.sendBroadcast(new Intent(GocMessage.CONTACT_RECEIVER));
+				//GocsdkService.this.sendBroadcast(new Intent(GocMessage.CONTACT_RECEIVER));
 			}
+
+			Log.d("wwj_sync_contact", "" + ContactOperate.contactList.size());
 		}
 
 		@Override
@@ -900,10 +946,10 @@ public class GocsdkService extends Service {
 				con.setName(name);
 				con.setPhone(number);
 				ContactOperate.contactList.add(con);
-				addContact(GocsdkService.this, name, number);
+				//addContact(GocsdkService.this, name, number);
 
 				//读取到一个新的联系人，发送广播
-				GocsdkService.this.sendBroadcast(new Intent(GocMessage.CONTACT_RECEIVER));
+				//GocsdkService.this.sendBroadcast(new Intent(GocMessage.CONTACT_RECEIVER));
 			}
 		}
 
@@ -1090,8 +1136,10 @@ public class GocsdkService extends Service {
 					return name;
 				}
 			}
-			cursor.close();
 		}
+		if(cursor != null)
+			cursor.close();
+		cDB.close();
 		return "未知号码";
 	}
 	
@@ -1178,6 +1226,7 @@ public class GocsdkService extends Service {
 	public void clearContactDB(Context context){
 		ContactDB cDB = new ContactDB(context, Config.BT_PARI_MAC);
 		cDB.clearDB();
+		cDB.close();
 		Log.d("goc", "通讯录已清除");
 		ContactOperate.contactList.clear();
 		ContactCallLogStatus.ContactStatus = ContactCallLogStatus.contactDeleteSuccessed;
@@ -1189,14 +1238,16 @@ public class GocsdkService extends Service {
 	 * @param name
 	 * @param phoneNum
 	 */
-	public void addContact(final Context context, final String name, final String phoneNum) {
-		new Thread(new Runnable(){
-			@Override
-			public void run() {
+	public void addContact(Context context, String name, String phoneNum) {
+//		new Thread(new Runnable(){
+//			@Override
+//			public void run() {
 				// TODO Auto-generated method stub
 			     /* 往 raw_contacts 中添加数据，并获取添加的id号*/  
 				//先判断系统数据库联系人是否存在
-				if(!contactIsExit(name, phoneNum)){
+		try{
+				if(!contactIsExit(name, phoneNum))
+				{
 			        Uri uri = Uri.parse("content://com.android.contacts/raw_contacts");  
 			        ContentResolver resolver = context.getContentResolver();
 			        ContentValues values = new ContentValues();  
@@ -1218,8 +1269,11 @@ public class GocsdkService extends Service {
 			        values.put("data1", phoneNum);  
 			        resolver.insert(uri, values);  
 				}
-			}			
-		}).start();
+		}catch(NullPointerException e){
+			//同步错误
+		}
+//			}			
+//		}).start();
 	}
     
 	/**
@@ -1269,9 +1323,20 @@ public class GocsdkService extends Service {
     		ContactDB cDB = new ContactDB(context, Config.BT_PARI_MAC);
     		cDB.clearDB();
     		cDB.inset(ContactOperate.contactList);
-
+    		cDB.close();
+    		
+    		int i = 0;
+    		for(Contact con : ContactOperate.contactList){
+    			Log.d("wwj_sync_contact", "" + i);
+    			i++;
+    			String name = con.getName();
+    			String number = con.getPhone();
+    			if(!contactIsExit(name, number)){
+    				contactInsert(name, number);
+    			}
+    		}
 			ContactCallLogStatus.ContactStatus = ContactCallLogStatus.contactSyncSuccessed;
-    		ContactOperate.getContact(GocsdkService.this);
+    		ContactOperate.getContact(context);
             return null;  
         }  
   
@@ -1283,9 +1348,10 @@ public class GocsdkService extends Service {
             int count = 0;
             if(ContactOperate.contactList != null)
             	count = ContactOperate.contactList.size();
-    		Toast.makeText(GocsdkService.this, count + "个手机联系人同步成功", Toast.LENGTH_LONG).show();
-    		sendBroadcast(new Intent(GocMessage.CONTACT_SYNC_DONE));
+    		Toast.makeText(context, count + "个手机联系人同步成功", Toast.LENGTH_LONG).show();
+    		context.sendBroadcast(new Intent(GocMessage.CONTACT_SYNC_DONE));
     		reStartBtMusic();
+    		Log.d("wwj_sync_time", "" + System.currentTimeMillis());
         }  
   
         /** 
@@ -1311,5 +1377,41 @@ public class GocsdkService extends Service {
 			}
 			Config.tqBtMusic = false;
 		}
+	}
+
+	public void contactInsert(String name, String number){
+		ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+        int rawContactInsertIndex = ops.size();
+        
+        ops.add(ContentProviderOperation.newInsert(RawContacts.CONTENT_URI)
+                .withValue(RawContacts.ACCOUNT_TYPE, null)
+                .withValue(RawContacts.ACCOUNT_NAME, null).build());
+        ops.add(ContentProviderOperation
+                .newInsert(Data.CONTENT_URI)
+                .withValueBackReference(Data.RAW_CONTACT_ID,rawContactInsertIndex)
+                .withValue(Data.MIMETYPE, StructuredName.CONTENT_ITEM_TYPE)
+                .withValue(StructuredName.DISPLAY_NAME, name) 
+                .build());
+        ops.add(ContentProviderOperation
+                .newInsert(Data.CONTENT_URI)
+                .withValueBackReference(
+                        ContactsContract.Data.RAW_CONTACT_ID,   rawContactInsertIndex)
+                .withValue(Data.MIMETYPE, Phone.CONTENT_ITEM_TYPE)
+                .withValue(Phone.NUMBER, number) 
+                .withValue(Phone.TYPE, Phone.TYPE_MOBILE).build());
+         
+        try
+        {
+            ContentProviderResult[] res = getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
+            
+        }
+        catch (RemoteException e)
+        { 
+            Log.e("error",e.toString());
+        }
+        catch (OperationApplicationException e) 
+        {
+        	Log.e("error",e.toString());
+        }  
 	}
 }

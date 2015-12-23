@@ -66,6 +66,8 @@ public class CallUI extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);  
     	Log.d("callUI", "onCreate");
         setContentView(R.layout.call_ui);  
+
+		audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         voiceOnPhone = false;
         initUI();
         
@@ -102,22 +104,10 @@ public class CallUI extends Activity implements OnClickListener {
 		voiceTransferToBT.setEnabled(voiceOnPhone);
 		voiceTransferToPhone.setEnabled(!voiceOnPhone);
 
-		audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-
     	Config.callUIShow = true;
     	
         //初始化BroadcastReceiver
         initGocReceiver();
-
-        audioManager.setStreamMute(AudioManager.STREAM_MUSIC, true);
-        //audioManager.setStreamMute(AudioManager.STREAM_NOTIFICATION, true);
-        //audioManager.setStreamMute(AudioManager.STREAM_SYSTEM, true);
-        //audioManager.setStreamMute(AudioManager.STREAM_ALARM, true);
-        //audioManager.setStreamMute(AudioManager.STREAM_DTMF, true);
-		audioManager.setSpeakerphoneOn(true);
-		//audioManager.setMode(AudioManager.ROUTE_SPEAKER);
-		//audioManager.setMode(AudioManager.STREAM_VOICE_CALL);
-		//startGocsdkService(OperateCommand.VOICE_TRANSFER_PHONE); 
     }  
     
     /**
@@ -154,6 +144,10 @@ public class CallUI extends Activity implements OnClickListener {
     	if(Config.cl.getNumber().equals("112")){
     		voiceTransfer.setVisibility(View.VISIBLE);
     		handler.post(r);
+    		audioManager.setStreamMute(AudioManager.STREAM_MUSIC, true);
+    		audioManager.setSpeakerphoneOn(true);
+    		audioManager.setMode(AudioManager.ROUTE_SPEAKER);
+    		//startGocsdkService(OperateCommand.VOICE_TRANSFER_BT);
     	}else{
     		voiceTransfer.setVisibility(View.INVISIBLE);
     	}
@@ -176,6 +170,10 @@ public class CallUI extends Activity implements OnClickListener {
         super.onDestroy();  
         if(gocReceiver != null)
         	unregisterReceiver(gocReceiver);
+	    //audioManager.setMicrophoneMute(false);
+        audioManager.setSpeakerphoneOn(false);
+		audioManager.setMode(AudioManager.MODE_NORMAL);
+        audioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
     }
     
     public boolean dispatchKeyEvent(KeyEvent event){
@@ -213,12 +211,16 @@ public class CallUI extends Activity implements OnClickListener {
         	callIncomingLayout.setVisibility(View.GONE);
         	callingLayout.setVisibility(View.VISIBLE);
 			startGocsdkService(OperateCommand.CALL_ANSWER);
+			callIncomingAccept.setEnabled(false);
+			callIncomingHangup.setEnabled(false);
 			break;
 		case R.id.call_incoming_hangup:
 		case R.id.calling_hangup:
 			//挂断电话
 	    	Config.callUIShow = false;
-			startGocsdkService(OperateCommand.CALL_HANG_UP);			
+			startGocsdkService(OperateCommand.CALL_HANG_UP);	
+			callIncomingHangup.setEnabled(false);
+			callingHangUp.setEnabled(false);
 			break;
 		case R.id.voice_transfer_to_bt:
 			//声音切换到蓝牙
@@ -317,13 +319,6 @@ public class CallUI extends Activity implements OnClickListener {
     			}
             	Log.d("callUI", "call ui finish...");
             	Config.callUIShow = false;
-                audioManager.setSpeakerphoneOn(false);
-        		//audioManager.setMode(AudioManager.MODE_NORMAL);
-                audioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
-                //audioManager.setStreamMute(AudioManager.STREAM_NOTIFICATION, false);
-                //audioManager.setStreamMute(AudioManager.STREAM_SYSTEM, false);
-                //audioManager.setStreamMute(AudioManager.STREAM_ALARM, false);
-                //audioManager.setStreamMute(AudioManager.STREAM_DTMF, false);
         		CallUI.this.finish();
         	}else if(GocMessage.CALL_RING_START.equals(action)){
         		Log.d("wwj_test", "CALL_RING_START");
@@ -332,8 +327,11 @@ public class CallUI extends Activity implements OnClickListener {
         		Log.d("wwj_test", "CALL_RING_STOP");
         	}else if(GocMessage.CALL_ONTALKING.equals(action)){
         		//电话接通
-        		Log.d("wwj_test", "CALL_ONTALKING");       		
-        		startGocsdkService(OperateCommand.VOICE_TRANSFER_BT);
+        		Log.d("wwj_test", "CALL_ONTALKING");
+        		//startGocsdkService(OperateCommand.VOICE_TRANSFER_BT);
+        		audioManager.setStreamMute(AudioManager.STREAM_MUSIC, true);
+        		audioManager.setSpeakerphoneOn(true);
+        		audioManager.setMode(AudioManager.ROUTE_SPEAKER);
         		
             	voiceTransfer.setVisibility(View.VISIBLE);
             	callIncomingLayout.setVisibility(View.GONE);

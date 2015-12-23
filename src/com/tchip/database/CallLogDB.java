@@ -70,7 +70,7 @@ public class CallLogDB extends SQLiteOpenHelper {
 	 * @param callLog
 	 */
 	public void inset(CallLog callLog){
-		insert(callLog.getName(), callLog.getName(), callLog.getType(), callLog.getTime(), callLog.getDuration());
+		insert(callLog.getName(), callLog.getNumber(), callLog.getType(), callLog.getTime(), callLog.getDuration());
 	}
 	
 	/**

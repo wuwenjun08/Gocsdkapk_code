@@ -50,15 +50,11 @@ public class ContactDB extends SQLiteOpenHelper {
 	
 	public void inset(List<Contact> list){
 		if(list != null){
-			ContentValues c=new ContentValues();
-			SQLiteDatabase s=ContactDB.this.getWritableDatabase();
+			List<Contact> mList = list;
 			Long time = System.currentTimeMillis();
-			for(Contact con : list){
-				c.put(NAME, con.getName());
-				c.put(NUMBER, con.getPhone());
-				s.insert(TABLE_NAME, null, c);
+			for(Contact con : mList){
+				insert(con.getName(), con.getPhone());
 			}
-			s.close();
 			Log.d("wwj_test", "time : " + (time - System.currentTimeMillis()));
 		}
 	}

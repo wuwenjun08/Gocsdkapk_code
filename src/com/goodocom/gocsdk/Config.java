@@ -52,7 +52,7 @@ public class Config {
 	//蓝牙播放音乐
 	public static boolean btMusicSync = true;
 	public static boolean btMusic = false;
-	public static boolean tqBtMusic = false;
+	public static boolean tqBtMusic = true;
 
 	/**
 	 * 根据号码查询联系人名字

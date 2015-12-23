@@ -11,6 +11,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
+import android.content.Context;
+import android.provider.Settings;
+import android.provider.Settings.SettingNotFoundException;
 import android.util.Log;
 
 /**
@@ -111,9 +114,19 @@ public class BTFileOperater{
 	 *         1:ACC上电
 	 */
 	public static boolean getAccStatus() {
-		//return getFileInt(fileAccStatus) == 1;
-		return true;
+		return getFileInt(fileAccStatus) == 1;
+		//return true;
 	}
+	
+	public static void setAirplaneModeOn(Context context) {  
+		try {
+			if(Settings.System.getInt(context.getContentResolver() , Settings.System.AIRPLANE_MODE_ON) == 1)
+				Settings.System.putInt(context.getContentResolver(),  Settings.System.AIRPLANE_MODE_ON, 0);
+		} catch (SettingNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
+	}  
 
 	public static int getFileInt(File file) {
 

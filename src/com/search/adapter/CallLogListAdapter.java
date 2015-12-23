@@ -1,5 +1,6 @@
 package com.search.adapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.goodocom.gocsdk.R;
@@ -30,10 +31,10 @@ public class CallLogListAdapter extends BaseAdapter {
 		public TextView duration;
 	}
        
-    public CallLogListAdapter(Context context, List<CallLog> listItems) {   
+    public CallLogListAdapter(Context context, ArrayList<CallLog> listItems) {   
         this.context = context;            
         listContainer = LayoutInflater.from(context);   //创建视图容器并设置上下文   
-        this.listItems = listItems;   
+        this.listItems =  (listItems == null) ? null : (ArrayList<CallLog>)listItems.clone();   
     }   
   
     public int getCount() {   

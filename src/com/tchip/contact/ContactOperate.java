@@ -40,8 +40,8 @@ import android.widget.Toast;
  */
 public class ContactOperate {
 	
-	public static List<Contact> contactList = new ArrayList<Contact>();
-	public static List<CallLog> callLogList = new ArrayList<CallLog>();
+	public static ArrayList<Contact> contactList = new ArrayList<Contact>();
+	public static ArrayList<CallLog> callLogList = new ArrayList<CallLog>();
 	
 	
 	/**
@@ -76,9 +76,11 @@ public class ContactOperate {
 					contactInfo.nameToNumber = ConverChineseCharToEn.converEnToNumber(contactInfo.namePy).replace("-", "");					
 					Dfine.user.add(contactInfo);
 				}
-				cursor.close();
 				context.sendBroadcast(new Intent("reset.list"));
 			}
+			if(cursor != null)
+				cursor.close();
+    		cDB.close();
 		}
 	}
 	
@@ -116,8 +118,10 @@ public class ContactOperate {
 				Log.d("wwj_test", cl.getName() + cl.getTime());
 				callLogList.add(cl);
 			}
-			cursor.close();
 		}
+		if(cursor != null)
+			cursor.close();
+		clDB.close();
 		Collections.reverse(ContactOperate.callLogList);
 	}
 	
@@ -134,5 +138,6 @@ public class ContactOperate {
 		}
 		callLogList.add(0, cl);
         clDB.inset(cl);
+        clDB.close();
 	}
 }

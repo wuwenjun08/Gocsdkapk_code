@@ -715,4 +715,6 @@ public class Commands {
 	 */
 	public static final String IND_CLOSE_BT = "P0";
 	
+	public static final String BT_STATUS = "BT";
+	
 }

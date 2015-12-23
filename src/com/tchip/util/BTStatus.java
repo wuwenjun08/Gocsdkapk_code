@@ -29,4 +29,5 @@ public class BTStatus{
 	//蓝牙错误，断开后重新连接
 	public static boolean btErrorReconnected = false;
 	public static int btErrorReconnectedCount = 0;
+	public static boolean btDisconnected = false;
 }

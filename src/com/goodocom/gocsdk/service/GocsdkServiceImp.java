@@ -374,4 +374,9 @@ public class GocsdkServiceImp extends IGocsdkService.Stub {
 		// TODO Auto-generated method stub
 		write(Commands.INQRIRY_AVRCP_STATUS);	
 	}
+	@Override
+	public void GOCSDK_SetBTStatus() throws RemoteException {
+		// TODO Auto-generated method stub
+		write(Commands.BT_STATUS);	
+	}
 }
