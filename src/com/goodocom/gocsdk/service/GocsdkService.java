@@ -531,59 +531,67 @@ public class GocsdkService extends Service {
 			gocSI.GOCSDK_getLocalName();
 			//上电蓝牙自动连接
 			gocSI.GOCSDK_SetAutoConnect('1');
-			if(btStatus.equals("1")){
-				gocSI.GOCSDK_OpenBt();
-				//Toast.makeText(GocsdkService.this, "蓝牙服务启动。。。。", Toast.LENGTH_LONG).show();
-				new Handler().postDelayed(new Runnable(){
-
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						String status = Settings.System.getString(getContentResolver(), "bt_enable");
-						try {
-							if(status.equals("1")){
-								gocSI.GOCSDK_SetBTFound();	//设置为发现模式
-								BTFileOperater.openSpeaker();
-							}else{
-								gocSI.GOCSDK_SetBTUnfound();	//设置为不被发现模式
-								BTFileOperater.closeSpeaker();
-							}
-
-							gocSI.GOCSDK_GetVolume();	//获取音量
-							gocSI.GOCSDK_InquiryCurBtName();	//获取连接蓝牙名称
-							gocSI.GOCSDK_InquiryCurBtAddr();	//获取连接蓝牙地址
-						} catch (RemoteException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}						
-					}
-					
-				}, 10000);
-				new Handler().postDelayed(new Runnable(){
-
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						String status = Settings.System.getString(getContentResolver(), "bt_enable");
-						try {
-							if(status.equals("1"))
-								gocSI.GOCSDK_connectLast();
-							//Toast.makeText(GocsdkService.this, "正在连接蓝牙", Toast.LENGTH_LONG).show();
-						} catch (RemoteException e) {
-							// TODO Auto-generated catch block
-							//Toast.makeText(GocsdkService.this, "蓝牙连接手机失败", Toast.LENGTH_SHORT).show();
-							e.printStackTrace();
-						}
-					}
-					
-				}, 15000);
-			}else{
-				gocSI.GOCSDK_CloseBt();
-				gocSI.GOCSDK_SetBTStatus();
-			}
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		if(btStatus.equals("1")){
+			//gocSI.GOCSDK_OpenBt();
+			//Toast.makeText(GocsdkService.this, "蓝牙服务启动。。。。", Toast.LENGTH_LONG).show();
+			new Handler().postDelayed(new Runnable(){
+
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					String status = Settings.System.getString(getContentResolver(), "bt_enable");
+					try {
+						if(status.equals("1")){
+							gocSI.GOCSDK_SetBTFound();	//设置为发现模式
+							BTFileOperater.openSpeaker();
+						}else{
+							gocSI.GOCSDK_SetBTUnfound();	//设置为不被发现模式
+							BTFileOperater.closeSpeaker();
+						}
+
+						gocSI.GOCSDK_GetVolume();	//获取音量
+						gocSI.GOCSDK_InquiryCurBtName();	//获取连接蓝牙名称
+						gocSI.GOCSDK_InquiryCurBtAddr();	//获取连接蓝牙地址
+					} catch (RemoteException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}						
+				}
+				
+			}, 5000);
+			new Handler().postDelayed(new Runnable(){
+
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					String status = Settings.System.getString(getContentResolver(), "bt_enable");
+					try {
+						if(status.equals("1")){
+							gocSI.GOCSDK_connectLast();
+							//Config.btNeedConnect = true;
+							//gocSI.GOCSDK_getPairList();
+							//Toast.makeText(GocsdkService.this, "正在连接蓝牙", Toast.LENGTH_LONG).show();
+						}
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						//Toast.makeText(GocsdkService.this, "蓝牙连接手机失败", Toast.LENGTH_SHORT).show();
+						e.printStackTrace();
+					}
+				}
+				
+			}, 10000);
+		}else{
+			try {
+				//gocSI.GOCSDK_CloseBt();
+				gocSI.GOCSDK_SetBTStatus();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -1115,6 +1123,16 @@ public class GocsdkService extends Service {
 			Log.d("goc", "volume " + volume);
 			//Toast.makeText(GocsdkService.this, "" + volume, Toast.LENGTH_SHORT).show();
 			Config.currentVolume = volume;
+		}
+
+		@Override
+		public void onPairBtAddr(String addr) throws RemoteException {
+			// TODO Auto-generated method stub
+			Log.d("goc","addr : " + addr);
+			//if(Config.btNeedConnect){
+			//	Config.btNeedConnect = false;
+			//	gocSI.GOCSDK_connectHFP(addr);
+			//}
 		}
 	};
 

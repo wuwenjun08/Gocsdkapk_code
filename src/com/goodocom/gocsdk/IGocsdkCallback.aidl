@@ -62,4 +62,5 @@ interface IGocsdkCallback{
 	void onPanStatus(int status);
 	//void onSignalBatteryVal(int signal, int battery);
 	void onBTVolume(int volume);
+	void onPairBtAddr(String addr);
 }

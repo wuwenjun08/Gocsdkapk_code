@@ -53,6 +53,11 @@ public class Config {
 	public static boolean btMusicSync = true;
 	public static boolean btMusic = false;
 	public static boolean tqBtMusic = true;
+	
+	//蓝牙获取配对列表
+	//true 需要连接
+	//false 不需要连接
+	public static boolean btNeedConnect = false;
 
 	/**
 	 * 根据号码查询联系人名字

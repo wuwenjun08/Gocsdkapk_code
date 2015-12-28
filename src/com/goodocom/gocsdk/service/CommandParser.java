@@ -361,6 +361,9 @@ public class CommandParser extends GocsdkCommon{
 				}else if(cmd.startsWith(Commands.IND_CURRENT_VOLUME)){
 					Log.d("goc", "cmd : " + cmd);
 					cbk.onBTVolume(Integer.parseInt(cmd.substring(2)));
+				}else if(cmd.startsWith(Commands.INQUIRY_PAIR_RECORD)){
+					Log.d("goc", "cmd : " + cmd);
+					cbk.onPairBtAddr(cmd.substring(2, 14));
 				}
 				
 				else{
